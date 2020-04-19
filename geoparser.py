@@ -16,14 +16,13 @@ import configparser
 from influxdb import InfluxDBClient
 from IPy import IP as ipadd
 
-def logparse(LOGPATH, INFLUXHOST, INFLUXPORT, INFLUXDBDB, INFLUXUSER, INFLUXUSERPASS, MEASUREMENT, GEOIPDB, INODE): # NOQA
+def logparse(LOGPATH, INFLUXHOST, INFLUXPORT, INFLUXDBDB, MEASUREMENT, GEOIPDB, INODE): # NOQA
     # Preparing variables and params
     IPS = {}
     COUNT = {}
     GEOHASH = {}
     HOSTNAME = os.uname()[1]
-    CLIENT = InfluxDBClient(host=INFLUXHOST, port=INFLUXPORT,
-                            username=INFLUXUSER, password=INFLUXUSERPASS, database=INFLUXDBDB) # NOQA
+    CLIENT = InfluxDBClient(host=INFLUXHOST, port=INFLUXPORT, database=INFLUXDBDB) # NOQA
 
     re_IPV4 = re.compile('(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
     re_IPV6 = re.compile('(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))') # NOQA
@@ -72,9 +71,9 @@ def logparse(LOGPATH, INFLUXHOST, INFLUXPORT, INFLUXDBDB, INFLUXUSER, INFLUXUSER
 
 def main():
     # Preparing for reading config file
-    PWD = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+    #PWD = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
     CONFIG = configparser.ConfigParser()
-    CONFIG.read('%s/settings.ini' % PWD)
+    CONFIG.read('settings.ini') # % PWD)
 
     # Getting params from config
     GEOIPDB = CONFIG.get('GEOIP', 'geoipdb')
@@ -82,9 +81,9 @@ def main():
     INFLUXHOST = CONFIG.get('INFLUXDB', 'host')
     INFLUXPORT = CONFIG.get('INFLUXDB', 'port')
     INFLUXDBDB = CONFIG.get('INFLUXDB', 'database')
-    INFLUXUSER = CONFIG.get('INFLUXDB', 'username')
+    #INFLUXUSER = CONFIG.get('INFLUXDB', 'username')
     MEASUREMENT = CONFIG.get('INFLUXDB', 'measurement')
-    INFLUXUSERPASS = CONFIG.get('INFLUXDB', 'password')
+    #INFLUXUSERPASS = CONFIG.get('INFLUXDB', 'password')
 
     # Parsing log file and sending metrics to Influxdb
     while True:
@@ -92,7 +91,7 @@ def main():
         INODE = os.stat(LOGPATH).st_ino
         # Run main loop and grep a log file
         if os.path.exists(LOGPATH):
-            logparse(LOGPATH, INFLUXHOST, INFLUXPORT, INFLUXDBDB, INFLUXUSER, INFLUXUSERPASS, MEASUREMENT, GEOIPDB, INODE) # NOQA
+            logparse(LOGPATH, INFLUXHOST, INFLUXPORT, INFLUXDBDB, MEASUREMENT, GEOIPDB, INODE) # NOQA
         else:
             print('File %s not found' % LOGPATH)
 
@@ -102,3 +101,5 @@ if __name__ == '__main__':
         main()
     except KeyboardInterrupt:
         sys.exit(0)
+
+
