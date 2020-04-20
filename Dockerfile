@@ -18,7 +18,7 @@ RUN apk add --no-cache \
     rm -r /root/.cache
 
 # Download Geolite base
-RUN wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz && \ 
+RUN wget https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=3P62UxTGhsF0jbnM&suffix=tar.gz && \ 
     mkdir tmpgeo && tar -xvf GeoLite2-City.tar.gz -C ./tmpgeo && \ 
     cp /tmpgeo/*/GeoLite2-City.mmdb / && rm -rf ./tmpgeo
 
